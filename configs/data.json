@@ -1,0 +1,5 @@
+{
+  "raw_instances_dir": "data/raw/vrptdt/vrptdt-benchmark-main/instances",
+  "base_instance_file": "berlin_500.json",
+  "exclude_suffix": "_pdp.json"
+}

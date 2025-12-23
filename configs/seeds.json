@@ -1,0 +1,8 @@
+{
+  "train_start": 0,
+  "train_end": 199,
+  "val_start": 200,
+  "val_end": 229,
+  "test_start": 230,
+  "test_end": 259
+}

@@ -1,0 +1,21 @@
+{
+  "raw_instances_dir": "data/raw/vrptdt/vrptdt-benchmark-main/instances",
+  "base_instance_file": "berlin_500.json",
+
+  "time_origin_hour": 15,
+  "n_bins": 7,
+  "bin_minutes": 60,
+
+  "customers_per_episode": 20,
+  "service_time_min": 2,
+
+  "blockage_bin": 6,
+  "BIG_M_TT_min": 1000000,
+  "BIG_M_cost_int": 1000000000000,
+  "SCALE": 1000,
+
+  "target_median_leg_tt_min": 6.0,
+  "v_free_kmh_clip": [10.0, 60.0],
+
+  "speed_mult": [0.90, 0.80, 0.70, 0.60, 0.70, 0.80, 0.90]
+}
