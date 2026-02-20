@@ -9,7 +9,7 @@
   "customers_per_episode": 20,
   "service_time_min": 2,
 
-  "blockage_bin": 6,
+  "blockage_bin": 1,
   "BIG_M_TT_min": 1000000,
   "BIG_M_cost_int": 1000000000000,
   "SCALE": 1000,

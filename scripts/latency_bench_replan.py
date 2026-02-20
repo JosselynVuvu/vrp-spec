@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
 import numpy as np
-import week2_lib
+import vrp_lib
 
 
 def repo_root() -> Path:
@@ -40,57 +40,36 @@ def episode_path(base_dir: Path, split: str, seed: int) -> Path:
     return base_dir / "episodes" / split.upper() / f"seed_{seed:03d}.npz"
 
 
-def _coerce_int_list(x: Any) -> List[int]:
-    if x is None:
-        return []
-    if isinstance(x, list):
-        out = []
-        for v in x:
-            try:
-                out.append(int(v))
-            except Exception:
-                pass
-        return out
-    return []
-
-
 def load_split_seeds(seeds_cfg: Dict[str, Any], split: str, base_dir: Path | None = None) -> List[int]:
     """
-    Supports range-based seeds.json:
+    Supports range-based configs/seeds.json:
       train_start/train_end, val_start/val_end, test_start/test_end.
 
-    Auto-detects whether *_end is inclusive or exclusive by checking whether the
-    episode file for the end seed exists (if base_dir is provided).
+    Auto-detects inclusive vs exclusive end by checking episode existence
+    (if base_dir is provided).
     """
     s = split.lower()
     k_start = f"{s}_start"
     k_end = f"{s}_end"
-
     if k_start not in seeds_cfg or k_end not in seeds_cfg:
         raise KeyError(f"Missing {k_start}/{k_end} in configs/seeds.json")
 
     start = int(seeds_cfg[k_start])
     end = int(seeds_cfg[k_end])
 
-    # Default assumption: inclusive range [start, end]
     inclusive_end = end
-
-    # If we can check episode existence, auto-detect exclusive end.
     if base_dir is not None:
-        # expected path: .../episodes/SPLIT/seed_XXX.npz
         def ep_exists(seed: int) -> bool:
             p = base_dir / "episodes" / split.upper() / f"seed_{seed:03d}.npz"
             return p.exists()
 
-        if not ep_exists(end) and ep_exists(end - 1):
-            # likely end is exclusive (like Python range semantics)
-            inclusive_end = end - 1
+        if (not ep_exists(end)) and ep_exists(end - 1):
+            inclusive_end = end - 1  # treat end as exclusive
 
     if inclusive_end < start:
         raise ValueError(f"Bad seed range for {split}: start={start}, end={end}")
 
     return list(range(start, inclusive_end + 1))
-
 
 
 def get_emissions_params(ingest_cfg: Dict[str, Any]) -> Tuple[float, float, float, float]:
@@ -136,6 +115,7 @@ def ortools_solve_tsp(cost_mat: np.ndarray, time_limit_ms: int) -> Tuple[int, fl
     t0 = time.perf_counter()
     sol = routing.SolveWithParameters(params)
     t_ms = (time.perf_counter() - t0) * 1000.0
+
     obj = int(sol.ObjectiveValue()) if sol is not None else -1
     return obj, t_ms
 
@@ -173,23 +153,25 @@ def main() -> None:
     first_ep_path = episode_path(base_dir, args.split, seeds[0])
     if not first_ep_path.exists():
         raise FileNotFoundError(f"Episode missing for seed {seeds[0]}: {first_ep_path}")
-    sample_ep = week2_lib.load_episode_npz(first_ep_path)
+    sample_ep = vrp_lib.load_episode_npz(first_ep_path)
     TT_sample = sample_ep["TT_data_min"]
     B = int(TT_sample.shape[0])
 
-    blockage_bin = int(ingest_cfg.get("blockage_bin", min(B - 1, 6)))
+    blockage_bin = int(ingest_cfg.get("blockage_bin", 1))  # your ingest.json sets 1
     if not (0 <= args.bin < B):
         raise ValueError(f"--bin must be in [0..{B-1}]")
+    if not (0 <= blockage_bin < B):
+        raise ValueError(f"blockage_bin must be in [0..{B-1}] but got {blockage_bin}")
 
     alpha, beta, gamma, delta = get_emissions_params(ingest_cfg)
 
     # Preload episodes (keeps disk I/O out of timing loop)
-    eps = {}
+    eps: Dict[int, Dict[str, Any]] = {}
     for s in seeds:
         p = episode_path(base_dir, args.split, s)
         if not p.exists():
             raise FileNotFoundError(f"Missing episode file for seed {s}: {p}")
-        eps[s] = week2_lib.load_episode_npz(p)
+        eps[s] = vrp_lib.load_episode_npz(p)
 
     t_cost, t_solve, t_total, objs, used_seeds = [], [], [], [], []
 
@@ -199,28 +181,31 @@ def main() -> None:
         dist_km = ep["dist_km"]
         TT_base_min = ep["TT_data_min"]
 
-        # COST BUILD timing (includes event gen + rain + CO2 proxy + int costs)
+        # COST BUILD timing (event gen + rain + CO2 proxy + int costs)
         t0 = time.perf_counter()
 
-        events = week2_lib.generate_events_for_episode(s, TT_base_min)
-        TT_hat_min = week2_lib.apply_rain_to_TT(TT_base_min, events.rain_mask, events.rho_TT)
+        events = vrp_lib.generate_events_for_episode(s, TT_base_min)
 
-        CO2_hat = week2_lib.meet_emissions_proxy(
+        # Rain observable: TT_hat includes rain
+        TT_hat_min = vrp_lib.apply_rain_to_TT(TT_base_min, events.rain_mask, events.rho_TT)
+
+        CO2_hat = vrp_lib.meet_emissions_proxy(
             dist_km=dist_km,
             TT_min=TT_hat_min,
             alpha=alpha, beta=beta, gamma=gamma, delta=delta,
         )
-        CO2_hat = week2_lib.apply_rain_to_CO2(CO2_hat, events.rain_mask, events.rho_CO2)
 
-        costs = week2_lib.build_int_costs(
+        # You chose: TT + extra (explicit CO2 multiplier)
+        CO2_hat = vrp_lib.apply_rain_to_CO2(CO2_hat, events.rain_mask, events.rho_CO2)
+
+        costs = vrp_lib.build_int_costs(
             TT_hat_min=TT_hat_min,
             CO2_hat=CO2_hat,
             lam=lam,
             SCALE=SCALE,
             blockage_bin=blockage_bin,
-            blocked_u=int(events.blocked_u),
-            blocked_v=int(events.blocked_v),
             BIG_M_cost_int=BIG_M_cost_int,
+            blocked_arcs=events.blocked_arcs,  # <-- NEW (k=3 arcs)
         )
 
         t_cost_ms = (time.perf_counter() - t0) * 1000.0
@@ -229,12 +214,10 @@ def main() -> None:
         cost_mat = costs["J_cost_int"][args.bin]
         obj, t_solve_ms = ortools_solve_tsp(cost_mat, args.time_limit_ms)
 
-        t_tot_ms = t_cost_ms + t_solve_ms
-
         used_seeds.append(s)
         t_cost.append(t_cost_ms)
         t_solve.append(t_solve_ms)
-        t_total.append(t_tot_ms)
+        t_total.append(t_cost_ms + t_solve_ms)
         objs.append(obj)
 
     t_cost = np.array(t_cost, dtype=np.float64)
@@ -246,7 +229,7 @@ def main() -> None:
     print(f"SOLVE p50/p95/max ms: {pct(t_solve,50):.3f} / {pct(t_solve,95):.3f} / {t_solve.max():.3f}")
     print(f"TOTAL p50/p95/max ms: {pct(t_total,50):.3f} / {pct(t_total,95):.3f} / {t_total.max():.3f}")
 
-    out_dir = root / "data" / "processed" / "bench" / "week3_latency"
+    out_dir = root / "data" / "processed" / "bench" / "solver_latency_results"
     out_dir.mkdir(parents=True, exist_ok=True)
     out_csv = out_dir / f"latency_{args.split}_bin{args.bin}_cap{args.time_limit_ms}_n{args.n_calls}.csv"
 
