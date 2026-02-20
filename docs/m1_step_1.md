@@ -1,4 +1,4 @@
-# Week 1 – Step 1: Setup + dataset acquisition (local only)
+# Milestone 1 – Step 1: Setup + dataset acquisition (local only)
 
 ## Repo + environment
 - Repo root: `C:/Users/User/Desktop/vrp-spec`

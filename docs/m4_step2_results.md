@@ -1,31 +1,31 @@
-# Week 4 — Step 2: Results + plots + interpretation (no gated policy)
+# Milestone 4 — Step 2: Results + plots + interpretation (main results)
 
 ## Files used (TEST)
-From `data/processed/bench/week4_results/`:
+From `data/processed/bench/digital_twin_eval_results/`:
 
 Rain:
-- `week4_TEST_rain_cap200_startbin0_blockbin1_k3_ef0.60.csv`
-- `week4_TEST_rain_cap500_startbin0_blockbin1_k3_ef0.60.csv`
-- `week4_TEST_rain_cap800_startbin0_blockbin1_k3_ef0.60.csv`
+- `twin_TEST_rain_cap200_startbin0_blockbin1_k3_ef0.60.csv`
+- `twin_TEST_rain_cap500_startbin0_blockbin1_k3_ef0.60.csv`
+- `twin_TEST_rain_cap800_startbin0_blockbin1_k3_ef0.60.csv`
 
 No-rain:
-- `week4_TEST_norain_cap200_startbin0_blockbin1_k3_ef0.60.csv`
-- `week4_TEST_norain_cap500_startbin0_blockbin1_k3_ef0.60.csv`
-- `week4_TEST_norain_cap800_startbin0_blockbin1_k3_ef0.60.csv`
+- `twin_TEST_norain_cap200_startbin0_blockbin1_k3_ef0.60.csv`
+- `twin_TEST_norain_cap500_startbin0_blockbin1_k3_ef0.60.csv`
+- `twin_TEST_norain_cap800_startbin0_blockbin1_k3_ef0.60.csv`
 
-Policies compared:
+Policies compared (main):
 - `B0_PlanOnce`
 - `B2_BlockageReplan`
 - `B1_AlwaysReplan`
 
-(We do **not** include gated replanning / Option C.)
+(We do **not** include gated replanning in the main results. Gate B is reported in Appendix A only.)
 
 ---
 
-## Figures (saved in `data/processed/bench/week4_results/`)
+## Figures (saved in `data/processed/bench/digital_twin_eval_results/`)
 
-### Figure W4.1 — Wall-clock objective vs time limit
-![](../data/processed/bench/week4_results/week4_grid_TEST_J_wall.png)
+### Figure 1 — Wall-clock objective vs time limit
+![](../data/processed/bench/digital_twin_eval_results/twin_grid_TEST_J_wall.png)
 
 **Caption.** Mean wall-clock objective \(J_{wall} = CO2 + \lambda\cdot wall\_time\) across TEST seeds versus OR-Tools time limit, shown separately for rain and no-rain.
 
@@ -33,17 +33,17 @@ Policies compared:
 
 ---
 
-### Figure W4.2 — Wall time vs time limit
-![](../data/processed/bench/week4_results/week4_grid_TEST_wall_time_min.png)
+### Figure 2 — Wall time vs time limit
+![](../data/processed/bench/digital_twin_eval_results/twin_grid_TEST_wall_time_min.png)
 
 **Caption.** Mean total wall-clock route time (includes travel + service + blockage waiting + planning latency) versus OR-Tools time limit, for rain and no-rain.
 
-**Interpretation.** The main wall-time reduction comes from eliminating **traffic waiting** due to blocked arcs. Differences across caps are minor in minutes because route quality is similar, and solver overhead remains small compared to travel + service time.
+**Interpretation.** The main wall-time reduction comes from eliminating **traffic waiting** due to blocked arcs. Differences across caps are minor because route quality changes little, and solver overhead remains small compared to travel + service time.
 
 ---
 
-### Figure W4.3 — CO₂ total vs time limit
-![](../data/processed/bench/week4_results/week4_grid_TEST_CO2_total.png)
+### Figure 3 — CO₂ total vs time limit
+![](../data/processed/bench/digital_twin_eval_results/twin_grid_TEST_CO2_total.png)
 
 **Caption.** Mean total CO₂ emissions across TEST seeds versus OR-Tools time limit, for rain and no-rain.
 
@@ -51,8 +51,8 @@ Policies compared:
 
 ---
 
-### Figure W4.4 — Planning wait (minutes) vs time limit
-![](../data/processed/bench/week4_results/week4_grid_TEST_planning_wait_min.png)
+### Figure 4 — Planning wait (minutes) vs time limit
+![](../data/processed/bench/digital_twin_eval_results/twin_grid_TEST_planning_wait_min.png)
 
 **Caption.** Mean planning wait time in minutes (solver time converted into elapsed wall-clock time) versus OR-Tools time limit, for rain and no-rain.
 
@@ -60,26 +60,26 @@ Policies compared:
 
 ---
 
-### Figure W4.5 — Relative prediction error (mean) vs time limit
-![](../data/processed/bench/week4_results/week4_grid_TEST_rel_pred_err_mean.png)
+### Figure 5 — Relative prediction error (mean) vs time limit
+![](../data/processed/bench/digital_twin_eval_results/twin_grid_TEST_rel_pred_err_mean.png)
 
 **Caption.** Mean relative per-leg travel-time prediction error across executed legs versus time limit, for rain and no-rain.
 
-**Interpretation.** Prediction error is largely insensitive to the OR-Tools time cap because it is driven by the twin-vs-truth mismatch rather than solver effort. Similar values across policies indicate that routing choice changes which arcs are driven, but not the underlying prediction quality trend.
+**Interpretation.** Prediction error is largely insensitive to the OR-Tools time cap because it is driven by the twin-vs-truth mismatch rather than solver effort. Similar values across policies indicate that routing choice changes which arcs are executed, but not the underlying prediction quality.
 
 ---
 
-### Figure W4.6 — Relative prediction error (p95) vs time limit
-![](../data/processed/bench/week4_results/week4_grid_TEST_rel_pred_err_p95.png)
+### Figure 6 — Relative prediction error (p95) vs time limit
+![](../data/processed/bench/digital_twin_eval_results/twin_grid_TEST_rel_pred_err_p95.png)
 
 **Caption.** 95th percentile of relative per-leg travel-time prediction error versus time limit, for rain and no-rain.
 
-**Interpretation.** The error tail remains stable across caps and policies, suggesting residual error is systematic (e.g., latent multiplier variation) rather than something improved by giving OR-Tools more time.
+**Interpretation.** The error tail remains stable across caps and policies, suggesting residual error is systematic rather than something improved by giving OR-Tools more time.
 
 ---
 
-### Figure W4.7 — Total solver time vs time limit
-![](../data/processed/bench/week4_results/week4_grid_TEST_solve_ms_total.png)
+### Figure 7 — Total solver time vs time limit
+![](../data/processed/bench/digital_twin_eval_results/twin_grid_TEST_solve_ms_total.png)
 
 **Caption.** Mean total solver time (milliseconds summed across all replans) versus time limit, for rain and no-rain.
 
@@ -87,8 +87,8 @@ Policies compared:
 
 ---
 
-### Figure W4.8 — Solver time p95 vs time limit
-![](../data/processed/bench/week4_results/week4_grid_TEST_solve_ms_p95.png)
+### Figure 8 — Solver time p95 vs time limit
+![](../data/processed/bench/digital_twin_eval_results/twin_grid_TEST_solve_ms_p95.png)
 
 **Caption.** Mean (across seeds) of the per-episode p95 single-solve runtime versus time limit, for rain and no-rain.
 
@@ -96,8 +96,8 @@ Policies compared:
 
 ---
 
-### Figure W4.9 — Solver time max vs time limit
-![](../data/processed/bench/week4_results/week4_grid_TEST_solve_ms_max.png)
+### Figure 9 — Solver time max vs time limit
+![](../data/processed/bench/digital_twin_eval_results/twin_grid_TEST_solve_ms_max.png)
 
 **Caption.** Mean (across seeds) of the maximum single-solve runtime per episode versus time limit, for rain and no-rain.
 
@@ -105,11 +105,38 @@ Policies compared:
 
 ---
 
-## Overall takeaway
+## Overall takeaway (main)
 - **B0_PlanOnce** can suffer blockage waiting when a blocked arc is encountered.
 - **B2_BlockageReplan** captures most of the benefit (avoids blockage delay) with minimal extra planning overhead.
 - **B1_AlwaysReplan** achieves similar objectives but is much more expensive in planning time.
 - Increasing the OR-Tools cap mainly increases planning latency; quality gains are small in these runs.
+
+## Key numbers from logs (sanity check)
+- **traffic_wait_min:** `B0_PlanOnce` > 0 in ~50% seeds (`delay_flag` rate ≈ 0.50); `B1/B2` ≈ 0.
+- **planning_wait_min:** increases with replanning frequency; (cap=500ms sample) `B0` ≈ 0.008 min, `B2` ≈ 0.017 min, `B1` ≈ 0.167 min.
+
+---
+
+# Appendix A — Gate B (optional ablation; not part of main results)
+
+Gate B (`B3_GateReplan`) runs a cheap probe solve to estimate predicted gain, and only performs a full replan if the predicted gain exceeds an estimated planning-cost threshold. This is reported as an ablation only (main submission uses B0/B1/B2).
+
+## Appendix figures (curated)
+(Keep the appendix readable: show only the core story.)
+
+### Appendix Figure A1 — Objective (Gate B vs AlwaysReplan)
+![](../data/processed/bench/digital_twin_eval_results/twin_gate_grid_TEST_J_wall.png)
+
+### Appendix Figure A2 — Planning overhead reduction
+![](../data/processed/bench/digital_twin_eval_results/twin_gate_grid_TEST_planning_wait_min.png)
+
+### Appendix Figure A3 — Total solver time reduction
+![](../data/processed/bench/digital_twin_eval_results/twin_gate_grid_TEST_solve_ms_total.png)
+
+Optional single diagnostic (pick one):
+- ![](../data/processed/bench/digital_twin_eval_results/twin_gate_grid_TEST_n_gate_full_replans.png)
+
+**Appendix interpretation.** Gate B targets B1-level quality while reducing planning cost by skipping full replans when predicted gain is small. In the sample shown, Gate B matches `J_wall` closely while reducing `planning_wait_min` and `solve_ms_total` relative to `B1_AlwaysReplan`.
 
 ---
 
@@ -117,9 +144,8 @@ Policies compared:
 
 From repo root:
 
-### Run baselines (TEST; blockage_bin=1, k=3, early_frac=0.60)
-
-
+### 1) Generate TEST CSVs (main)
+```bash
 # rain
 python scripts/run_baselines.py --split TEST --time_limit_ms 200 --start_bin 0 --blockage_bin 1 --n_blockages 3 --early_frac 0.60
 python scripts/run_baselines.py --split TEST --time_limit_ms 500 --start_bin 0 --blockage_bin 1 --n_blockages 3 --early_frac 0.60
@@ -129,3 +155,9 @@ python scripts/run_baselines.py --split TEST --time_limit_ms 800 --start_bin 0 -
 python scripts/run_baselines.py --split TEST --time_limit_ms 200 --start_bin 0 --blockage_bin 1 --n_blockages 3 --early_frac 0.60 --disable_rain
 python scripts/run_baselines.py --split TEST --time_limit_ms 500 --start_bin 0 --blockage_bin 1 --n_blockages 3 --early_frac 0.60 --disable_rain
 python scripts/run_baselines.py --split TEST --time_limit_ms 800 --start_bin 0 --blockage_bin 1 --n_blockages 3 --early_frac 0.60 --disable_rain
+
+### 2) Generate TEST plots 
+```bash
+
+python scripts/plot_twin_eval_grid.py --split TEST 
+

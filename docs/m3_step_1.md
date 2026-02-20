@@ -1,7 +1,7 @@
-## Week 3 — Step 1: Baseline policies + blockage simulation (no planning overhead)
+## Milestone 3 — Step 1: Baseline policies + blockage simulation (no planning overhead)
 
 ## Goal
-Implement and benchmark three baseline replanning strategies under **(i)** rain (observable), and **(ii)** a one-bin road blockage (unobservable until encountered), using the Week 2 cost tensors.
+Implement and benchmark three baseline replanning strategies under **(i)** rain (observable), and **(ii)** a one-bin road blockage (unobservable until encountered), using the Milestone 2 cost tensors.
 
 Baseline policies:
 - **B0_PlanOnce**: plan once at the start, then execute the plan (no replans).
@@ -10,7 +10,7 @@ Baseline policies:
 
 ## Inputs
 - Episode tensors (per seed): `TT_data_min (B×N×N)`, `dist_km (N×N)`, `node_ids`
-- Week 2 outputs:
+- Milstone 2 outputs:
   - rain generation (deterministic by seed)
   - blocked arcs (K arcs chosen early in the route)
   - planning costs: `J_cost_int[b,i,j]` (includes BIG_M on blocked arcs at `blockage_bin`)
@@ -59,14 +59,14 @@ Run with and without rain, for the time budgets in the spec:
 
 ```bash
 # rain
-py scripts/run_baselines.py --split TEST --time_limit_ms 200 --start_bin 0 --blockage_bin 1 --n_blockages 3 --early_frac 0.60
-py scripts/run_baselines.py --split TEST --time_limit_ms 500 --start_bin 0 --blockage_bin 1 --n_blockages 3 --early_frac 0.60
-py scripts/run_baselines.py --split TEST --time_limit_ms 800 --start_bin 0 --blockage_bin 1 --n_blockages 3 --early_frac 0.60
+py scripts/run_baselines_.py --split TEST --time_limit_ms 200 --start_bin 0 --blockage_bin 1 --n_blockages 3 --early_frac 0.60
+py scripts/run_baselines_.py --split TEST --time_limit_ms 500 --start_bin 0 --blockage_bin 1 --n_blockages 3 --early_frac 0.60
+py scripts/run_baselines_.py --split TEST --time_limit_ms 800 --start_bin 0 --blockage_bin 1 --n_blockages 3 --early_frac 0.60
 
 # norain ablation
-py scripts/run_baselines.py --split TEST --time_limit_ms 200 --start_bin 0 --blockage_bin 1 --n_blockages 3 --early_frac 0.60 --disable_rain
-py scripts/run_baselines.py --split TEST --time_limit_ms 500 --start_bin 0 --blockage_bin 1 --n_blockages 3 --early_frac 0.60 --disable_rain
-py scripts/run_baselines.py --split TEST --time_limit_ms 800 --start_bin 0 --blockage_bin 1 --n_blockages 3 --early_frac 0.60 --disable_rain
+py scripts/run_baselines_.py --split TEST --time_limit_ms 200 --start_bin 0 --blockage_bin 1 --n_blockages 3 --early_frac 0.60 --disable_rain
+py scripts/run_baselines_.py --split TEST --time_limit_ms 500 --start_bin 0 --blockage_bin 1 --n_blockages 3 --early_frac 0.60 --disable_rain
+py scripts/run_baselines_.py --split TEST --time_limit_ms 800 --start_bin 0 --blockage_bin 1 --n_blockages 3 --early_frac 0.60 --disable_rain
 ```
 
 Outputs are written to:

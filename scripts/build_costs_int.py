@@ -7,7 +7,7 @@ sys.path.append(str(Path(__file__).resolve().parent))
 
 import numpy as np
 from _common import REPO_ROOT, load_json, split_for_seed
-from week2_lib import (
+from scripts.vrp_lib import (
     load_episode_npz,
     generate_events_for_episode,
     apply_rain_to_TT,

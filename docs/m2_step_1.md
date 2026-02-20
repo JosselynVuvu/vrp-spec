@@ -1,4 +1,4 @@
-# Week 2 — Step 1: Events + objective normalization (SPEC v1.7)
+# Milestone 2 — Step 1: Events + objective normalization (SPEC v1.7)
 
 ## Goal
 Make dynamic events reproducible and define the composite objective weight λ using TRAIN-only data.

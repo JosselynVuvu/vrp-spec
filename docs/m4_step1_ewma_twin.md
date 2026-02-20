@@ -1,9 +1,9 @@
-# Week 4 — Step 1: EWMA Digital Twin (no gated policy)
+# Milestone 4 — Step 1: EWMA Digital Twin (no gated policy)
 
 ## Goal
-Implement a Week 4 **digital twin multiplier** \(\hat m(b)\) (scalar per time bin \(b\)) with an **online EWMA update**, and use it inside the receding-horizon OR-Tools replanning loop.
+Implement a Milestone 4 **digital twin multiplier** \(\hat m(b)\) (scalar per time bin \(b\)) with an **online EWMA update**, and use it inside the receding-horizon OR-Tools replanning loop.
 
-This Week 4 submission compares the baseline replanning policies:
+This Milestone 4 submission compares the baseline replanning policies:
 - **B0_PlanOnce**
 - **B2_BlockageReplan**
 - **B1_AlwaysReplan**
@@ -65,7 +65,7 @@ This waiting contributes to `traffic_wait_min` and increases `wall_time_min` unl
 
 ---
 
-## Logged Week 4 prediction error metrics
+## Logged Milestone 4 prediction error metrics
 For each executed leg (using the execution bin \(b\)):
 - Predicted TT (twin): \(TT_{\text{hat}}=\widehat{TT}_{ij}(b)\)
 - Executed truth TT: \(TT_{\text{obs}}\)
@@ -75,7 +75,7 @@ Relative error:
 e=\frac{|TT_{\text{obs}}-TT_{\text{hat}}|}{\max(TT_{\text{hat}},10^{-9})}.
 \]
 
-Aggregates written to the Week 4 CSVs:
+Aggregates written to the Milestone 4 CSVs:
 - `rel_pred_err_mean`
 - `rel_pred_err_p95`
 - `rel_pred_err_max`

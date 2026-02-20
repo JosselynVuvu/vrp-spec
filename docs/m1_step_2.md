@@ -1,4 +1,4 @@
-# Week 1 – Step 2: Data ingestion + canonicalization (SPEC v1.7)
+# Milestone 1 – Step 2: Data ingestion + canonicalization (SPEC v1.7)
 
 ## Base instance (locked)
 - Instance file: `berlin_500.json`

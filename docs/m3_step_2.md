@@ -1,4 +1,4 @@
-## Week 3 — Step 2: Add planning overhead + wall-clock objective (J_wall)
+## Milestone 3 — Step 2: Add planning overhead + wall-clock objective (J_wall)
 
 ## Goal
 Make the evaluation closer to reality by accounting for **solver latency** as **vehicle idle time** that:
@@ -58,7 +58,7 @@ For each seed, compute:
 These make “benefit vs compute cost” visible and thesis-friendly.
 
 ## Plotting
-Grid plots used in Week 3:
+Grid plots used in Milestone 3:
 - `J_wall` vs `time_limit_ms` (rain vs norain)
 - `planning_wait_min` vs `time_limit_ms`
 - `solve_ms_total` vs `time_limit_ms`
@@ -74,6 +74,4 @@ py scripts/plot_policy_eval_grid.py --split TEST --metric solve_ms_total --k 3 -
 If you have a file like:
 `baselines_TEST_rain_cap500_startbin1_blockbin1_k3_ef0.60.csv`
 
-Do **not** delete it—keep it as an extra experiment—but **exclude it from the main plots**
-so you are comparing like-for-like. The clean solution is to filter by `startbin=0` in the plotting script.
-If you can’t filter yet, move the file to a subfolder (e.g., `week3_results/extra/`) so it won’t be picked up.
+

@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
 import numpy as np
-import week2_lib
+import scripts.vrp_lib as vrp_lib
 
 
 def repo_root() -> Path:
@@ -182,7 +182,7 @@ def main() -> None:
     if not ep_path.exists():
         raise FileNotFoundError(f"Episode not found: {ep_path}")
 
-    ep = week2_lib.load_episode_npz(ep_path)
+    ep = vrp_lib.load_episode_npz(ep_path)
     node_ids = ep["node_ids"]
     dist_km = ep["dist_km"]
     TT_base_min = ep["TT_data_min"]  # (B,N,N)
@@ -206,17 +206,17 @@ def main() -> None:
     # -----------------------------
     t0 = time.perf_counter()
 
-    events = week2_lib.generate_events_for_episode(int(args.seed), TT_base_min)
-    TT_hat_min = week2_lib.apply_rain_to_TT(TT_base_min, events.rain_mask, events.rho_TT)
+    events = vrp_lib.generate_events_for_episode(int(args.seed), TT_base_min)
+    TT_hat_min = vrp_lib.apply_rain_to_TT(TT_base_min, events.rain_mask, events.rho_TT)
 
-    CO2_hat = week2_lib.meet_emissions_proxy(
+    CO2_hat = vrp_lib.meet_emissions_proxy(
         dist_km=dist_km,
         TT_min=TT_hat_min,
         alpha=alpha, beta=beta, gamma=gamma, delta=delta,
     )
-    CO2_hat = week2_lib.apply_rain_to_CO2(CO2_hat, events.rain_mask, events.rho_CO2)
+    CO2_hat = vrp_lib.apply_rain_to_CO2(CO2_hat, events.rain_mask, events.rho_CO2)
 
-    costs = week2_lib.build_int_costs(
+    costs = vrp_lib.build_int_costs(
         TT_hat_min=TT_hat_min,
         CO2_hat=CO2_hat,
         lam=lam,

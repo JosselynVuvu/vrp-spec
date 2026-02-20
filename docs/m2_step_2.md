@@ -1,4 +1,4 @@
-# Week 2 — Step 2: CO2 proxy + integer planning costs + blockage enforcement
+# Milestone 2 — Step 2: CO2 proxy + integer planning costs + blockage enforcement
 
 ## Goal
 Produce integer cost tensors per time bin for OR-Tools and enforce a 60-minute blockage via BIG_M on planning cost.

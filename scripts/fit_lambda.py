@@ -6,7 +6,7 @@ sys.path.append(str(Path(__file__).resolve().parent))
 
 import numpy as np
 from _common import REPO_ROOT, load_json, expected_seeds, split_for_seed
-from week2_lib import load_episode_npz, meet_emissions_proxy
+from scripts.vrp_lib import load_episode_npz, meet_emissions_proxy
 
 
 def main():
