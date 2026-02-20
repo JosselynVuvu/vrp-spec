@@ -218,7 +218,12 @@ def main() -> None:
         return
 
     # Route display
-    route_node_ids = [int(node_ids[i]) for i in route]
+    def to_id(x):
+        # handles numpy scalars cleanly
+        x = x.item() if hasattr(x, "item") else x
+        return str(x)
+
+    route_node_ids = [to_id(node_ids[i]) for i in route]
     print(f"SOLVE_MS: {solve_ms:.3f}")
     print(f"OBJ(J_cost_int): {obj}")
     print("ROUTE (indices):", route)
