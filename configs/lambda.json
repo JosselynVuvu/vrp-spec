@@ -1,0 +1,18 @@
+{
+  "lambda": 0.5914923122133638,
+  "computed_on": {
+    "split": "TRAIN",
+    "seeds": [
+      0,
+      199
+    ],
+    "n_seeds": 200,
+    "note": "Computed on base TT_data_min (no rain/blockage) to avoid event leakage."
+  },
+  "emissions_params": {
+    "alpha": 0.0002,
+    "beta": 0.0,
+    "gamma": 0.3,
+    "delta": 2.0
+  }
+}
